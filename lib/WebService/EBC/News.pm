@@ -134,72 +134,15 @@ sub find {
          $sinopse =~ s/(\&\w*)$//;
 
          $self->sinopse( $sinopse );
-
-         # retrieve the media
-         my $mediatree = $content->look_down( '_tag', 'img' );
-         my $url = $mediatree->attr('src') unless ! $mediatree;
-         # if no image put a default one
-         $url = "/images/ebc_evento4anos.png?http://" unless $url;
-         $_ = $url;
-         if (!  m/http\:\/\// ){
-             $url = "http://agenciabrasil.ebc.com.br/". $url;
-         }
-         $media->[0] = { url => $url } ;
-         $self->media( $media ) unless ! $url ;
+         
+         # get the pictures
+         $self->media( new WebService::EBC::Picture ({ 
+		    dom => $content 
+	        })->find;
+         ) unless ! $content ;
     } else {
         $self->texto("No text in $_[0]?");
     }
-
-         
-=for hack
-
-    # parse news and get content, images and make a sinopse
-    my $texto;
-    my $t_array = [];
-    my $p = HTML::Parser->new(
-                   api_version => 3,
-
-                   text_h => [sub {
-                            #my $event = shift;
-                            my $t     = shift;
-                            push @{$t_array}, $t; 
-                   }, "tagname, text"]
-
-    );
-
-                   text_h => [sub {
-                            my $t = shift;
-                            #$t =~ s/^\s+// ;
-                            #$t =~ s/\s+$// ;
-                            $t =~ s/\n//g;
-                            #$t =~ s/\s//g;
-                            $t =~ s/\r//g;
-                            $t =~ s/\t//g;
-                            $t =~ s/\&nbsp;//g;
-                            $t =~ s/nbsp;//g;
-                            push @{$t_array}, $t; 
-                   }, "text"]
-
-
-
-
-    $p->report_tags(qw(img div p));
-    $p->parse ($self->{content} || die) || die $!;
-    my $title;
-    my $author;
-    my $chunk;
-    foreach my $t (@{$t_array}){
-        if ( length $t && !$title ){ $title = "$t"; next; }
-        if ( length $t && !$author ){ $author = "$t"; next; }
-        if ( length $t ){ $chunk .= "$t"; }
-    }
-
-    $texto = "<b>$title</b><p>$author</p>" . "<p>" . substr($chunk,0,300);
-    $texto =~ s/(\w+)$//;
-
-    $self->sinopse($texto);
-=cut
-
     return $self;
 }
 

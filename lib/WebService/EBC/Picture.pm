@@ -18,6 +18,36 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+has 'titulo' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
+has 'sinopse' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
+has 'width' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
+has 'height' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
+has 'url' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
+has 'dom' => (
+      is  => 'rw',
+      isa => 'Str',
+);
+
 
 =head1 SYNOPSIS
 
@@ -41,7 +71,32 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =cut
 
-sub function1 {
+
+sub BUILD {
+        use Carp;
+	my $self = shift;
+	croak ('
+EBC::Picture needs a url or a dom in the constructor, bad! 
+	);
+	') unless $self->{url} || $self->{dom};
+        return $self;
+}
+
+
+sub find {
+         $self = shift;
+         my $content = $self->{dom};
+         # retrieve the media
+         my $mediatree = $content->look_down( '_tag', 'img' );
+         my $url = $mediatree->attr('src') unless ! $mediatree;
+         # if no image put a default one
+         $url = "/images/ebc_evento4anos.png?http://" unless $url;
+         $_ = $url;
+         if (!  m/http\:\/\// ){
+             $url = "http://agenciabrasil.ebc.com.br/". $url;
+         }
+         $media->[0] = { url => $url } ;
+    
 }
 
 =head2 function2
