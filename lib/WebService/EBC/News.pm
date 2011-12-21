@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use XML::Feed;
 use LWP::Simple;
+use HTML::TreeBuilder;
 use Moose;
 use MooseX::NonMoose;
 
@@ -82,7 +83,6 @@ sub find {
     my $self = shift;
     my $hash = shift;
 
-    use HTML::TreeBuilder;
 
     # download the news
     $self->content(get($hash->{ebc_link}));
