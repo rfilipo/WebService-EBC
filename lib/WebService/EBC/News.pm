@@ -147,21 +147,6 @@ sub find {
 }
 
 
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
-
 =head1 AUTHOR
 
 Monsenhor, C<< <monsenhor at cpan.org> >>
